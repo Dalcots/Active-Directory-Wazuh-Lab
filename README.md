@@ -120,8 +120,48 @@ Wazuh immediately generated a Level 15 (Critical Severity) Alert based on the Sy
 
 ---
 
+## Phase 5: Defensive Remediation & Hardening
+
+To protect the network from the executed downloader vector, a hardening policy was deployed to enforce PowerShell Constrained Language Mode (CLM) via Group Policy.
+
+### Step 1: Enforcing CLM via Active Directory GPO
+On DC01, a new Group Policy Object (GPO) named `Harden-PowerShell` was created and linked to the root of the dalcots.local domain. An environment variable was configured to globally restrict the PowerShell runtime environment:
+* **System Variable Name:** `__PSLockdownPolicy`
+* **Value:** `4` (Constrained Language Mode)
+
+*Placeholder for GPO Configuration Screenshot:*
+![GPO Configuration](images/gp.png)
+*(Image description: Group Policy Management Editor showing the creation of the __PSLockdownPolicy environment variable).*
+
+---
+
+### Step 2: Policy Enforcement & Verification
+On the workstation PC02, the policy was updated using `gpupdate /force`. 
+
+Verification of the language mode restriction:
+```powershell
+$ExecutionContext.SessionState.LanguageMode
+```
+Output: **`ConstrainedLanguage`**
+
+*Placeholder for Policy Verification Screenshot:*
+![Policy Verification](images/checking_constraint.png)
+*(Image description: PowerShell terminal confirming the language mode is restricted to ConstrainedLanguage).*
+
+---
+
+### Step 3: Verifying Mitigation (Blocked Attack)
+The PowerShell downloader attack was executed again on PC02. PowerShell immediately terminated the execution, blocking the creation of the .NET webclient object:
+
+*Placeholder for Blocked Attack Screenshot:*
+![Blocked Attack](images/remediation_block.png)
+*(Image description: PowerShell terminal output displaying a PermissionDenied exception and preventing the download script from running).*
+
+---
+
 ## Core Skills Demonstrated
 * System Virtualization & Management: KVM/QEMU, Libvirt, virtual switch configuration, hardware passthrough concepts.
 * Active Directory Administration: Domain Promotion, Forest creation, Windows DNS configuration, workstation domain joins.
 * Endpoint Telemetry & Profiling: Sysmon profiling, event log tuning, OS baseline hardening.
 * SOC Operations & Incident Detection: SIEM configuration, agent deployments, rule analysis, event auditing.
+* Enterprise GPO Engineering: Enforcing security policies and system lockdown configurations via Active Directory.
